@@ -29,7 +29,7 @@
 
 ## 快速开始
 
-**一行安装**（装到 `~/Applications`，附带 `buddy` 命令，下载示例角色前会先征求同意）：
+**一行安装**（优先安装最新 Release，没有 Release 时自动从源码编译；装到 `~/Applications`，附带 `buddy` 命令，下载示例角色前会先征求同意）：
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/Liloker/live2d-buddy/main/install.sh | zsh
@@ -43,7 +43,7 @@ make run        # 编译 → 下载运行库和示例角色（会先询问）→
 make install    # 安装到 ~/Applications/Live2D Buddy.app 和 ~/.local/bin/buddy
 ```
 
-**下载 Release 压缩包**：在 [Releases](https://github.com/Liloker/live2d-buddy/releases) 下载后打开 App，右键桌宠 →「下载示例角色…」。App 只做了 ad-hoc 签名、未经 Apple 公证；如果系统拒绝打开，去「系统设置 → 隐私与安全性 → 仍要打开」（用上面的 curl 安装不会遇到这个问题）。
+**下载 Release 压缩包**：发布 Release 后可在 [Releases](https://github.com/Liloker/live2d-buddy/releases) 下载，打开 App，右键桌宠 →「下载示例角色…」。App 只做了 ad-hoc 签名、未经 Apple 公证；如果系统拒绝打开，去「系统设置 → 隐私与安全性 → 仍要打开」（用上面的 curl 安装不会遇到这个问题）。
 
 > 国内网络：资源下载按 jsDelivr → fastly → GitHub → gcore 依次尝试，并会自动沿用 macOS 系统代理；也可以用 `scripts/fetch-assets.sh --from <本地目录>` 离线导入。
 

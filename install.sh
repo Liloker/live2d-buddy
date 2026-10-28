@@ -3,9 +3,10 @@
 #
 #   curl -fsSL https://raw.githubusercontent.com/Liloker/live2d-buddy/main/install.sh | zsh
 #
-# Installs the latest release to ~/Applications, the `buddy` CLI to ~/.local/bin,
-# then downloads the third-party Live2D runtime + demo characters (~4 MB,
-# checksum-verified) into ~/Library/Application Support/Live2D Buddy.
+# Installs the latest release to ~/Applications (or, if there is no release yet,
+# builds from source with the Command Line Tools), the `buddy` CLI to
+# ~/.local/bin, then downloads the third-party Live2D runtime + demo characters
+# (~4 MB, checksum-verified) into ~/Library/Application Support/Live2D Buddy.
 # Downloading with curl means no Gatekeeper quarantine prompt for the unsigned app.
 set -euo pipefail
 
@@ -20,14 +21,22 @@ tmp=$(mktemp -d "${TMPDIR:-/tmp}/live2d-buddy-install.XXXXXX")
 trap 'rm -rf "$tmp"' EXIT
 
 print "→ Downloading $url"
-curl -fL --retry 2 --connect-timeout 10 -o "$tmp/app.zip" "$url"
-ditto -x -k "$tmp/app.zip" "$tmp"
-[[ -d "$tmp/Live2D Buddy.app" ]] || { print -u2 "Unexpected archive layout."; exit 1; }
+if curl -fsL --retry 2 --connect-timeout 10 -o "$tmp/app.zip" "$url" && ditto -x -k "$tmp/app.zip" "$tmp/release" 2>/dev/null \
+   && [[ -d "$tmp/release/Live2D Buddy.app" ]]; then
+  built="$tmp/release/Live2D Buddy.app"
+else
+  print "→ No prebuilt release available — building from source instead"
+  xcrun --find swiftc >/dev/null 2>&1 || { print -u2 "Needs the Xcode Command Line Tools first:  xcode-select --install"; exit 1; }
+  mkdir -p "$tmp/src"
+  curl -fsSL --retry 2 "https://codeload.github.com/$repo/tar.gz/refs/heads/${LIVE2D_BUDDY_REF:-main}" | tar -xz -C "$tmp/src" --strip-components 1
+  zsh "$tmp/src/scripts/build.sh"
+  built="$tmp/src/build/Live2D Buddy.app"
+fi
 
 osascript -e 'tell application id "io.github.liloker.live2dbuddy" to quit' >/dev/null 2>&1 || true
 mkdir -p "$prefix" "$bindir"
 rm -rf "$prefix/Live2D Buddy.app"
-ditto "$tmp/Live2D Buddy.app" "$prefix/Live2D Buddy.app"
+ditto "$built" "$prefix/Live2D Buddy.app"
 xattr -dr com.apple.quarantine "$prefix/Live2D Buddy.app" 2>/dev/null || true
 install -m 755 "$prefix/Live2D Buddy.app/Contents/Resources/buddy" "$bindir/buddy"
 

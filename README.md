@@ -29,7 +29,7 @@ English · [简体中文](README.zh-CN.md)
 
 ## Quick start
 
-**One line** (installs to `~/Applications`, adds the `buddy` CLI, asks before downloading the demo characters):
+**One line** (installs the latest release — or builds from source if there is none — to `~/Applications`, adds the `buddy` CLI, asks before downloading the demo characters):
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/Liloker/live2d-buddy/main/install.sh | zsh
@@ -43,7 +43,7 @@ make run        # build → fetch runtime + demo characters (asks first) → lau
 make install    # → ~/Applications/Live2D Buddy.app and ~/.local/bin/buddy
 ```
 
-**Release zip:** download from [Releases](https://github.com/Liloker/live2d-buddy/releases), open the app, then right-click the pet → **Get demo characters…**. The build is ad-hoc signed, not notarized — if macOS refuses to open it, use **System Settings → Privacy & Security → Open Anyway** (the curl installer avoids this).
+**Release zip:** when a release is published, download it from [Releases](https://github.com/Liloker/live2d-buddy/releases), open the app, then right-click the pet → **Get demo characters…**. The build is ad-hoc signed, not notarized — if macOS refuses to open it, use **System Settings → Privacy & Security → Open Anyway** (the curl installer avoids this).
 
 ## Using it
 
