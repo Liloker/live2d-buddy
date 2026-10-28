@@ -1,0 +1,223 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Live2D Buddy — demo stage</title>
+<!--
+  A fake desktop used to record docs/media/demo-*.gif. The pet itself is the
+  real renderer (index.html?manual=1) in an iframe; this page only drives it.
+  See docs/demo/README.md.
+-->
+<style>
+  :root { --ink: #2b2140; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; width: 1280px; height: 720px; overflow: hidden; }
+  body { font: 13px/1.5 -apple-system, "Inter", "Noto Sans CJK SC", "Noto Sans", sans-serif; color: var(--ink); }
+  #desktop {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(900px 520px at 12% 18%, #c9b8ff 0%, transparent 60%),
+      radial-gradient(760px 520px at 88% 78%, #ffc6dc 0%, transparent 62%),
+      radial-gradient(640px 420px at 70% 8%, #bfe3ff 0%, transparent 60%),
+      linear-gradient(135deg, #e9e1ff 0%, #fde8f1 55%, #fff1e6 100%);
+  }
+  #menubar {
+    position: absolute; top: 0; left: 0; right: 0; height: 28px; padding: 0 14px;
+    display: flex; align-items: center; justify-content: space-between;
+    background: rgba(255, 255, 255, .42); backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255, 255, 255, .55); font-size: 13px;
+  }
+  #menubar .left span { margin-right: 18px; }
+  #menubar .left .app { font-weight: 700; }
+  #menubar .right { display: flex; gap: 14px; align-items: center; }
+  #menubar svg { width: 16px; height: 16px; }
+  .window {
+    position: absolute; border-radius: 12px; overflow: hidden;
+    box-shadow: 0 22px 60px rgba(60, 30, 90, .28), 0 0 0 1px rgba(0, 0, 0, .25);
+  }
+  #term { left: 56px; top: 76px; width: 680px; height: 430px; background: #1d1b26; }
+  .titlebar {
+    height: 30px; display: flex; align-items: center; gap: 8px; padding: 0 12px;
+    background: #2a2735; color: #a9a3bd; font-size: 12px;
+  }
+  .titlebar i { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+  .titlebar .r { background: #ff5f57; } .titlebar .y { background: #febc2e; } .titlebar .g { background: #28c840; }
+  .titlebar span { margin-left: 10px; }
+  #term pre {
+    margin: 0; padding: 16px 20px; color: #e8e4f4; white-space: pre-wrap;
+    font: 14px/1.62 "JetBrains Mono", "SF Mono", Menlo, "DejaVu Sans Mono", "Noto Sans Mono CJK SC", monospace;
+  }
+  #term .prompt { color: #9b8cff; } #term .dim { color: #8a849c; } #term .ok { color: #7ee2a8; }
+  #term .tool { color: #ffb4d6; } #term .hook { color: #ffd479; } #term .ask { color: #8fd3ff; }
+  #caption {
+    position: absolute; left: 56px; top: 534px; max-width: 680px;
+    padding: 12px 18px; border-radius: 14px; font-size: 18px; font-weight: 600; color: #3a2a5c;
+    background: rgba(255, 255, 255, .78); box-shadow: 0 10px 30px rgba(80, 40, 120, .14);
+    border: 1px solid rgba(255, 255, 255, .9);
+  }
+  #caption code { font: 600 16px "JetBrains Mono", Menlo, monospace; color: #7a4fe0; }
+  #brand { position: absolute; left: 60px; bottom: 34px; display: flex; align-items: center; gap: 10px; color: #5b4a7e; font-weight: 700; font-size: 15px; }
+  #brand img { width: 30px; height: 30px; }
+  #brand small { font-weight: 500; opacity: .8; }
+  #pet { position: absolute; border: 0; background: transparent; }
+  #cursor { position: absolute; width: 22px; height: 30px; left: 0; top: 0; pointer-events: none; filter: drop-shadow(0 2px 2px rgba(0,0,0,.35)); }
+  #ripple { position: absolute; width: 34px; height: 34px; margin: -17px 0 0 -17px; border-radius: 50%; border: 3px solid rgba(155, 120, 255, .9); opacity: 0; }
+</style>
+</head>
+<body>
+<div id="desktop">
+  <div id="menubar">
+    <div class="left"><span class="app">Terminal</span><span>Shell</span><span>Edit</span><span>View</span><span>Window</span></div>
+    <div class="right">
+      <svg viewBox="0 0 24 24" fill="#3a2a5c"><path d="M12 2l1.8 5.6L19.5 9.4 13.8 11.2 12 17l-1.8-5.8L4.5 9.4l5.7-1.8zM19 14l.9 2.6 2.6.9-2.6.9L19 21l-.9-2.6-2.6-.9 2.6-.9z"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="#3a2a5c" stroke-width="2.2" stroke-linecap="round"><path d="M2.5 9a14 14 0 0119 0M6 12.5a9 9 0 0112 0M9.5 16a4 4 0 015 0"/><circle cx="12" cy="19.2" r="1.3" fill="#3a2a5c"/></svg>
+      <span id="clock">Wed 16:20</span>
+    </div>
+  </div>
+  <div id="term" class="window">
+    <div class="titlebar"><i class="r"></i><i class="y"></i><i class="g"></i><span>~/projects/shop-api</span></div>
+    <pre id="term-body"></pre>
+  </div>
+  <div id="caption"></div>
+  <div id="brand"><img src="docs/media/logo.png" alt=""><span>Live2D Buddy <small id="brand-sub"></small></span></div>
+  <iframe id="pet" src="index.html?manual=1" allowtransparency="true"></iframe>
+  <div id="ripple"></div>
+  <svg id="cursor" viewBox="0 0 22 30"><path d="M2 1.5v23.2l6.1-5.6 3.9 9 3.8-1.6-3.9-8.9h8.4z" fill="#111" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg>
+</div>
+<script>
+(() => {
+  const $ = (s) => document.querySelector(s);
+  const iframe = $('#pet'), cursor = $('#cursor'), ripple = $('#ripple'), term = $('#term-body'), caption = $('#caption');
+  const H = 560; // pet window height inside the 720p stage
+  const RIGHT = 1250, BOTTOM = 712;
+  let pet = null, lang = 'en', lines = [], cursorPos = { x: 1000, y: 640 };
+
+  const T = {
+    en: {
+      sub: 'a tiny Live2D desktop pet for macOS',
+      c1: 'Eyes follow your cursor — no Accessibility permission',
+      c2: 'Hover and click — she reacts',
+      c3: 'Agent finished → Stop hook → <code>buddy hook claude</code>',
+      c4: 'Swap characters any time: <code>buddy character tia</code>',
+      c5: 'Agent needs approval → Notification hook',
+      task1: 'fix the flaky login test', task2: 'bump the payment SDK',
+      fixed: 'Fixed: the test no longer races the session refresh.',
+      allow: 'Allow this command? (y/n)', green: 'Upgraded to stripe 19.2 — all checks green.',
+    },
+    zh: {
+      sub: '一个超轻量的 macOS Live2D 桌宠',
+      c1: '眼睛跟着鼠标走 —— 不需要辅助功能权限',
+      c2: '悬停、点击，她都有反应',
+      c3: 'Agent 跑完 → Stop hook → <code>buddy hook claude</code>',
+      c4: '随时换角色：<code>buddy character tia</code>',
+      c5: 'Agent 等你批准 → Notification hook',
+      task1: '修一下不稳定的登录测试', task2: '升级支付 SDK',
+      fixed: '已修复：测试不再和会话刷新抢跑。',
+      allow: '允许执行这条命令吗？(y/n)', green: '已升级到 stripe 19.2，全部检查通过。',
+    },
+  };
+  let t = T.en;
+
+  function placePet(aspect) {
+    const w = Math.round((H - 70) * aspect);
+    Object.assign(iframe.style, { width: w + 'px', height: H + 'px', left: (RIGHT - w) + 'px', top: (BOTTOM - H) + 'px' });
+  }
+  function rel(p) { return { x: p.x - parseFloat(iframe.style.left), y: p.y - parseFloat(iframe.style.top) }; }
+  function setCursor(p) {
+    cursorPos = p;
+    cursor.style.transform = `translate(${p.x - 2}px, ${p.y - 1}px)`;
+    if (pet) { const r = rel(p); pet.pointer(r.x, r.y); }
+  }
+  function click(p) {
+    if (pet) { const r = rel(p); pet.tap(r.x, r.y); }
+    rippleAt = { ...p, t0: now };
+  }
+  let rippleAt = null, now = 0;
+
+  // Terminal script: [time ms, html line]
+  function script() {
+    return [
+      [6200, `<span class="prompt">~/projects/shop-api ❯</span> claude "${t.task1}"`],
+      [6900, `<span class="tool">⏺ Read</span> tests/login.spec.ts`],
+      [7400, `<span class="tool">⏺ Edit</span> src/auth/session.ts <span class="dim">(+6 −2)</span>`],
+      [7900, `<span class="tool">⏺ Bash</span> npm test`],
+      [8500, `  <span class="ok">✓ 42 passed</span> <span class="dim">(3.1s)</span>`],
+      [9000, `<span class="tool">⏺</span> ${t.fixed}`],
+      [9300, `  <span class="hook">⚡ Stop hook → buddy hook claude</span>`],
+      [13600, ``],
+      [13700, `<span class="prompt">~/projects/shop-api ❯</span> claude "${t.task2}"`],
+      [14300, `<span class="tool">⏺ Bash</span> npm install stripe@latest`],
+      [14700, `  <span class="ask">? ${t.allow}</span>`],
+      [14900, `  <span class="hook">⚡ Notification hook → buddy hook claude</span>`],
+      [17200, `  <span class="ok">✓ y</span>`],
+      [17900, `<span class="tool">⏺</span> ${t.green}`],
+      [18200, `  <span class="hook">⚡ Stop hook → buddy hook claude</span>`],
+    ];
+  }
+
+  // Cursor keyframes: [time ms, x, y]
+  const path = [
+    [0, 560, 260], [1000, 250, 470], [2000, 780, 120], [2900, 1236, 190], [3600, 780, 520],
+    [4400, 1090, 300], [5000, 1098, 290], [5400, 1098, 290], [6200, 640, 560], [12000, 640, 560],
+  ];
+  function cursorAt(ms) {
+    for (let i = 0; i < path.length - 1; i++) {
+      const [t0, x0, y0] = path[i], [t1, x1, y1] = path[i + 1];
+      if (ms >= t0 && ms <= t1) {
+        const k = (ms - t0) / (t1 - t0), e = k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
+        return { x: x0 + (x1 - x0) * e, y: y0 + (y1 - y0) * e };
+      }
+    }
+    const last = path[path.length - 1];
+    return { x: last[1], y: last[2] };
+  }
+
+  const fired = new Set();
+  function once(key, ms, at, fn) { if (ms >= at && !fired.has(key)) { fired.add(key); fn(); } }
+
+  window.stage = {
+    async setup(language) {
+      lang = language; t = T[language.startsWith('zh') ? 'zh' : 'en'];
+      $('#brand-sub').textContent = '· ' + t.sub;
+      placePet(0.82);
+      await new Promise((r) => (iframe.contentWindow && iframe.contentWindow.pet ? r() : iframe.addEventListener('load', r, { once: true })));
+      pet = iframe.contentWindow.pet;
+      await pet.init({ lang: language, bubbles: true });
+      await pet.load('nepgear');
+      setCursor(cursorAt(0));
+    },
+    async switchTo(id, aspect) {
+      placePet(aspect);
+      await pet.load(id);
+    },
+    /** Advance the scripted scene to `ms` (fires one-shot events when crossing their time). */
+    at(ms) {
+      now = ms;
+      const p = cursorAt(ms);
+      setCursor(p);
+      // captions
+      caption.innerHTML = ms < 3600 ? t.c1 : ms < 6100 ? t.c2 : ms < 10600 ? t.c3 : ms < 13400 ? t.c4 : ms < 17100 ? t.c5 : t.c3;
+      caption.style.opacity = 1;
+      // terminal
+      term.innerHTML = script().filter(([at]) => ms >= at).map(([, l]) => l).join('\n')
+        + (Math.floor(ms / 500) % 2 ? '' : '\n<span class="prompt">▌</span>');
+      // clicks
+      once('click1', ms, 5100, () => click({ x: 1098, y: 290 }));
+      // agent events (what the hooks would send)
+      once('done1', ms, 9350, () => pet.event('done'));
+      once('attn', ms, 14950, () => pet.event('attention'));
+      once('done2', ms, 18250, () => pet.event('done'));
+      // ripple
+      if (rippleAt) {
+        const k = (ms - rippleAt.t0) / 450;
+        if (k >= 0 && k <= 1) Object.assign(ripple.style, { left: rippleAt.x + 'px', top: rippleAt.y + 'px', opacity: 1 - k, transform: `scale(${0.6 + k * 0.9})` });
+        else ripple.style.opacity = 0;
+      }
+      iframe.style.opacity = 1;
+    },
+    fade(value) { iframe.style.opacity = value; },
+  };
+})();
+</script>
+</body>
+</html>

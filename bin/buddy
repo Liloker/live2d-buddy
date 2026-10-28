@@ -1,0 +1,19 @@
+#!/bin/zsh
+# buddy — command-line remote for Live2D Buddy. Forwards to the app binary's CLI mode.
+#
+#   buddy say "Build passed ✨"
+#   buddy event done            # done | attention | error | thinking
+#   buddy hook claude           # Claude Code hook (JSON on stdin)
+#   buddy hook codex '<json>'   # Codex `notify`
+#   buddy help
+#
+# Finds the app in $LIVE2D_BUDDY_APP, ~/Applications, /Applications, the repo's build/, or Spotlight.
+here=${0:A:h}
+for app in "${LIVE2D_BUDDY_APP:-}" "$HOME/Applications/Live2D Buddy.app" "/Applications/Live2D Buddy.app" \
+           "$here/../build/Live2D Buddy.app" "${here:h:h}"; do
+  [[ -n $app && -x "$app/Contents/MacOS/Live2DBuddy" ]] && exec "$app/Contents/MacOS/Live2DBuddy" --cli "$@"
+done
+app=$(mdfind 'kMDItemCFBundleIdentifier == "io.github.liloker.live2dbuddy"' 2>/dev/null | head -n 1)
+[[ -n $app && -x "$app/Contents/MacOS/Live2DBuddy" ]] && exec "$app/Contents/MacOS/Live2DBuddy" --cli "$@"
+print -u2 "buddy: Live2D Buddy.app not found — install it to ~/Applications or set LIVE2D_BUDDY_APP"
+exit 1

@@ -1,0 +1,44 @@
+{
+  "$comment": "Characters shown in the menu. Model files are NOT part of this repository: scripts/fetch-assets.sh downloads the two demo models into ~/Library/Application Support/Live2D Buddy/models/. To add your own Cubism 2 model, copy this file to that folder and append an entry — see docs/custom-models.md.",
+  "default": "nepgear",
+  "characters": [
+    {
+      "id": "nepgear",
+      "name": { "zh": "紫色露腰款", "en": "Nepgear" },
+      "model": "models/HyperdimensionNeptunia/nepgear_extra/",
+      "windowAspect": 0.82,
+      "regions": { "head": 0.34, "upper": 0.62 },
+      "motions": {
+        "head": { "group": "flick_head" },
+        "upper": { "group": "tap_body", "match": "/Touch[1-6]\\.mtn$", "limit": 3 }
+      },
+      "reactions": {},
+      "greeting": {
+        "zh": "我来啦。点点我，或者拖我到喜欢的位置。",
+        "en": "I'm here! Poke me, or drag me wherever you like."
+      },
+      "credit": "Nepgear — Hyperdimension Neptunia © IDEA FACTORY / COMPILE HEART. Model via fghrsh/live2d_api."
+    },
+    {
+      "id": "tia",
+      "name": { "zh": "小恶魔 Tia", "en": "Tia" },
+      "model": "models/Potion-Maker/Tia/",
+      "windowAspect": 1.05,
+      "regions": { "head": 0.5, "upper": 0.8 },
+      "motions": {
+        "head": { "group": "flick_head" },
+        "upper": { "group": "tap_body", "match": "/Touch[1-6]\\.mtn$", "limit": 3 }
+      },
+      "reactions": {
+        "success": "motions/Success.mtn",
+        "fail": "motions/Fail.mtn",
+        "attention": "motions/Touch2.mtn"
+      },
+      "greeting": {
+        "zh": "你好呀，我是 Tia。今天也一起加油吧。",
+        "en": "Hi, I'm Tia! Let's do our best today."
+      },
+      "credit": "Tia — © Potion Maker. Model via fghrsh/live2d_api."
+    }
+  ]
+}

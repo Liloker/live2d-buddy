@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Unit tests
+        run: node tests/core.test.cjs
+
+      - name: Build universal app (arm64 + x86_64)
+        run: ARCHS="arm64 x86_64" scripts/build.sh
+
+      - name: CLI smoke (dry run)
+        run: |
+          "build/Live2D Buddy.app/Contents/MacOS/Live2DBuddy" --cli say "hello from CI" --dry-run
+          echo '{"hook_event_name":"Stop"}' | "build/Live2D Buddy.app/Contents/MacOS/Live2DBuddy" --cli hook claude --dry-run
+
+      - name: Pinned third-party assets still resolve and match their checksums
+        run: scripts/fetch-assets.sh --yes --quiet --dest "$RUNNER_TEMP/assets"
+
+      - name: Package
+        run: ditto -c -k --keepParent "build/Live2D Buddy.app" Live2D-Buddy-macOS.zip
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Live2D-Buddy-macOS
+          path: Live2D-Buddy-macOS.zip

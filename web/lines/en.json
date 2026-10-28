@@ -1,0 +1,34 @@
+{
+  "$comment": "English lines (original to this project, MIT). Copy to ~/Library/Application Support/Live2D Buddy/lines/en.json to customise.",
+  "click": [
+    "Hey! That tickles.",
+    "Careful — I'm working here!",
+    "Boop received.",
+    "Did you need something?",
+    "Hehe, again?",
+    "I'm awake, I'm awake!",
+    "Gently, please!"
+  ],
+  "hover": [
+    "Oh, hi there!",
+    "Looking for something?",
+    "Cursor spotted!",
+    "Hm?",
+    "Hands where I can see them~",
+    "Keep going, you're doing great.",
+    "Psst — you can drag me anywhere."
+  ],
+  "idle": [
+    "I'm right here with you.",
+    "Time for a sip of water?",
+    "Want me somewhere else? Just drag me.",
+    "Rest your eyes for a moment — look into the distance."
+  ],
+  "menuSay": "I'm here. Let's take it one step at a time.",
+  "agent": {
+    "done": ["All done! Come take a look ✨", "That run is finished — nice work.", "Task complete. Ready for review!"],
+    "attention": ["Your agent needs you!", "Waiting for your approval~", "Psst — there's a question for you."],
+    "error": ["Uh-oh, something failed.", "That run hit an error. Take a look?"],
+    "thinking": ["On it!", "Thinking…"]
+  }
+}

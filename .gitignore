@@ -1,0 +1,11 @@
+build/
+dist/
+vendor/
+node_modules/
+.DS_Store
+*.zip
+# third-party assets never belong in the repo
+/live2d.min.js
+/models/
+web/live2d.min.js
+web/models/

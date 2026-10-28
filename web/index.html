@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Live2D Buddy</title>
+<style>
+  html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; background: transparent; user-select: none; -webkit-user-select: none; }
+  canvas { position: absolute; width: 100%; height: calc(100% - 70px); bottom: 0; image-rendering: auto; }
+  #bubble {
+    position: absolute; top: 12px; left: 50%;
+    transform: translateX(-50%) translateY(5px);
+    width: max-content; max-width: 80%; box-sizing: border-box;
+    padding: 12px 17px; border: 1px solid #ded3ef; border-radius: 17px;
+    background: rgba(255, 252, 255, .97); color: #453355;
+    font: 14px/1.6 -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Noto Sans CJK SC", sans-serif;
+    box-shadow: 0 4px 14px #30204015;
+    opacity: 0; transition: opacity .2s, transform .2s; pointer-events: none;
+    overflow-wrap: anywhere;
+  }
+  #bubble.show { opacity: 1; transform: translateX(-50%); }
+  #bubble:after {
+    content: ''; position: absolute; bottom: -6px; left: 49%; width: 10px; height: 10px;
+    background: #fffcff; border-right: 1px solid #ded3ef; border-bottom: 1px solid #ded3ef; transform: rotate(45deg);
+  }
+</style>
+</head>
+<body>
+<canvas id="pet" aria-label="Live2D Buddy"></canvas>
+<div id="bubble" role="status"></div>
+<!-- Live2D Cubism 2 runtime: third-party, downloaded by scripts/fetch-assets.sh, not part of this repo -->
+<script src="live2d.min.js"></script>
+<script src="core.js"></script>
+<script src="pet.js"></script>
+</body>
+</html>
